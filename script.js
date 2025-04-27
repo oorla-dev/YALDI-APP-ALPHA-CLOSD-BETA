@@ -484,6 +484,29 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
   }
+   function togglePlayerExpansion(e) {
+    // Don't toggle if clicking on controls
+    if (
+      e.target.closest(".controls") ||
+      e.target.closest(".play-btn") ||
+      e.target.closest(".prev-btn") ||
+      e.target.closest(".next-btn")
+    ) {
+      return
+    }
+
+    isPlayerExpanded = !isPlayerExpanded
+
+    playerContainer.classList.toggle("expanded", isPlayerExpanded)
+
+    // Aggiungi/rimuovi la classe al body
+    if (isPlayerExpanded) {
+        document.body.classList.add('player-expanded');
+    } else {
+        document.body.classList.remove('player-expanded');
+    }
+  }
+  
 
   function renderProducts(category = "all") {
     const productsGrid = document.querySelector("#stores-view .products-grid")
