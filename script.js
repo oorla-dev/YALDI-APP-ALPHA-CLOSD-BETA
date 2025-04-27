@@ -605,52 +605,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // This function selects a track but doesn't automatically play it
   function selectTrack(track, album) {
     if (!track || !album) {
-      console.error("selectTrack called without valid track or album.")
-      return
+      console.error("selectTrack called without valid track or album.");
+      return;
     }
 
     // Handle click on same track (toggle play/pause)
     if (currentTrack && currentTrack.id === track.id) {
-      togglePlayPause()
-      return
+      togglePlayPause();
+      return;
     }
 
     // Change track
-    console.log(`Selected track (ID: ${track.id}): ${track.title}`)
+    console.log(`Selected track (ID: ${track.id}): ${track.title}`);
 
     // Save reference to current track and album
-    currentTrack = { ...track, albumId: album.id }
-    currentAlbum = album
+    currentTrack = { ...track, albumId: album.id };
+    currentAlbum = album;
 
     // Verify audio path
-    console.log(`Setting audio source to: ${track.audioSrc}`)
+    console.log(`Setting audio source to: ${track.audioSrc}`);
 
     if (!track.audioSrc || typeof track.audioSrc !== "string" || track.audioSrc.trim() === "") {
-      console.error(`Error: Invalid audio path for track "${track.title}" (ID: ${track.id}). Received:`, track.audioSrc)
-      alert(`Error: Missing or invalid audio path for "${track.title}". Check the data in the 'albums' array.`)
-      return
+      console.error(`Error: Invalid audio path for track "${track.title}" (ID: ${track.id}). Received:`, track.audioSrc);
+      alert(`Error: Missing or invalid audio path for "${track.title}". Check the data in the 'albums' array.`);
+      return;
     }
 
     // Set the audio source
-    audioPlayer.src = track.audioSrc
-    audioPlayer.load()
+    audioPlayer.src = track.audioSrc;
+    audioPlayer.load();
 
     // Update player bar UI
-    updatePlayerUI(track, album)
+    updatePlayerUI(track, album);
 
     // Update track list UI if in album detail view
     if (currentView === "album-detail-view" && currentAlbum.id === album.id) {
-      updateTrackListUI(track.id)
+      updateTrackListUI(track.id);
     } else if (currentView === "album-detail-view") {
-      updateTrackListUI(null)
+      updateTrackListUI(null);
     }
 
     // Build queue from current album
-    buildQueue(track, album)
+    buildQueue(track, album);
 
-    // Don't auto-play, wait for user to press play
-    isPlaying = false
-    updatePlayPauseButton()
+    // **Aggiungi questa riga per avviare la riproduzione automatica**
+    audioPlayer.play().catch((error) => {
+      console.error("Error playing audio after track selection:", error);
+      if (error.name === "NotAllowedError") {
+        console.warn("Autoplay was prevented. User interaction is required.");
+        // Puoi anche mostrare un messaggio all'utente qui se lo desideri.
+      }
+    });
+    isPlaying = true; // Aggiorna lo stato di riproduzione
+    updatePlayPauseButton();
   }
 
   function updatePlayerUI(track, album) {
