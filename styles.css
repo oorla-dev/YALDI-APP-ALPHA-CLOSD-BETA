@@ -6,6 +6,10 @@ body {
   padding: 0;
 }
 
+body.player-expanded {
+    overflow: hidden;
+}
+
 .app-container {
   max-width: 500px;
   margin: 0 auto;
@@ -325,7 +329,7 @@ body {
 }
 
 .message-from-y {
-  background-color: #000;
+  background-color: #fff;
   color: white;
   margin-left: auto;
 }
@@ -351,26 +355,28 @@ body {
   margin-right: auto;
   width: 100%;
   z-index: 900;
-  transition: transform 0.3s ease, height 0.3s ease; /* Keep transition for smooth expansion */
+  /* transition: transform 0.3s ease, height 0.3s ease; */ /* Rimosso o modificato se usi la transizione su altre proprietà */
   background-color: white; /* Background for the mini-player bar */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  /* Add this for a smooth transition of position properties */
-  transition: bottom 0.3s ease, top 0.3s ease, height 0.3s ease, transform 0.3s ease;
+  transition: bottom 0.3s ease, top 0.3s ease, height 0.3s ease, transform 0.3s ease, opacity 0.3s ease; /* Aggiungi opacity alla transizione se il mini-player scompare */
 }
 
 /* Expanded state for Player Container */
 .player-container.expanded {
   /* Cover the entire viewport */
-  top: 0; /* Position from the top */
-  bottom: 0; /* Position from the bottom */
+  position: fixed; /* Assicura che sia fisso rispetto alla viewport */
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  max-width: none; /* Remove max-width constraint */
-  margin: 0; /* Remove auto margins */
-  height: 100vh; /* Occupy full viewport height */
+  width: 100vw; /* Copri l'intera larghezza della viewport */
+  height: 100vh; /* Copri l'intera altezza della viewport */
+  max-width: none; /* Rimuovi max-width constraint */
+  margin: 0; /* Rimuovi auto margins */
   transform: translateY(0); /* Remove the transform that was used for positioning */
   z-index: 1050; /* Ensure it's above other content and nav bar */
-  background-color: #121212; /* Dark background for the expanded player */
+  background-color: white; /* Dark background for the expanded player */
+  overflow: hidden; /* Impedisci lo scorrimento del player esteso stesso, la coda ha il suo scorrimento */
 }
 
 
