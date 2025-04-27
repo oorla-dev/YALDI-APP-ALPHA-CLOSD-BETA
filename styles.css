@@ -365,13 +365,45 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 15px;
-  background-color: #f8f8f8;
+  /* Modifiche per player bar bianco con testo nero */
+  background-color: white; /* Sfondo bianco */
+  color: black; /* Testo nero */
   border-top: 1px solid #eee;
   cursor: pointer;
   /* Make sure player bar is hidden when expanded */
   opacity: 1;
   visibility: visible;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.expanded-player .track-info-large .track-title-large,
+.expanded-player .track-info-large .track-artist,
+.expanded-player .player-header .album-title {
+    color: black;
+}
+
+.expanded-player .player-footer .footer-btn {
+    color: #333; /* Un grigio scuro per i pulsanti inattivi */
+    font-weight: 500;
+}
+
+.expanded-player .player-footer .footer-btn.active {
+    color: black; /* Nero per il pulsante attivo */
+    font-weight: bold;
+}
+
+.progress-container {
+  width: calc(100% - 40px); /* Adjust width */
+  height: 4px; /* Thicker progress bar */
+  background-color: #ddd; /* Grigio chiaro per lo sfondo della barra */
+  margin: 10px 20px; /* Adjust margins */
+  cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+}
+
+.expanded-player .controls-large button {
+    color: black;
 }
 
 .now-playing {
@@ -422,15 +454,19 @@ body {
 .expanded-player {
   height: 100%; /* Occupy full height of the container */
   width: 100%; /* Occupy full width of the container */
-  background-color: #121212; /* Dark background */
-  color: white;
+  background-color: white; /* Sfondo bianco */
+  color: black; /* Testo nero per default */
   display: none; /* Hidden by default */
   flex-direction: column;
   align-items: center; /* Center content horizontally */
   justify-content: flex-start; /* Align content to the top initially */
-  padding: 20px; /* Add some padding */
+  /* Modifica: Aggiungi padding sui lati per farlo sembrare più piccolo */
+  padding: 20px; /* Padding verticale */
+  padding-left: 20px; /* Padding sinistro */
+  padding-right: 20px; /* Padding destro */
   overflow-y: auto; /* Allow scrolling if content overflows */
   position: relative; /* Needed for absolute positioning of elements inside if necessary */
+  box-sizing: border-box; /* Include padding nel calcolo della larghezza/altezza */
 }
 
 .player-container.expanded .player-bar {
@@ -442,6 +478,13 @@ body {
 
 .player-container.expanded .expanded-player {
   display: flex;
+}
+
+.player-container.expanded .player-footer #queue-btn {
+    display: none;
+}
+.player-container.expanded .player-footer {
+    justify-content: space-around; /* O 'center' o 'flex-start' a seconda del layout desiderato */
 }
 
 .player-header {
@@ -534,7 +577,7 @@ body {
 
 .progress-bar {
   height: 100%;
-  background-color: #1db954; /* Spotify green for progress */
+  background-color: #1db954; /* Verde Spotify per la barra di progressione riempita */
   width: 0%;
   transition: width 0.1s linear;
   border-radius: 2px;
@@ -544,7 +587,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #aaa;
+  color: black; /* Testo nero per i tempi */
   padding: 5px 20px; /* Adjust padding */
   width: 100%; /* Take full width */
   flex-shrink: 0;
@@ -605,30 +648,30 @@ body {
 
 .queue-container {
   overflow-y: auto;
-  padding: 15px; /* Adjust padding */
+  padding: 15px;
   margin-top: 10px;
-  margin-bottom: 15px; /* Space above the footer */
-  width: 100%; /* Take full width */
-  flex-grow: 1; /* Allow queue to take available space */
+  margin-bottom: 15px;
+  width: 100%;
+  flex-grow: 1;
 }
 
 .queue-item {
   display: flex;
   align-items: center;
-  padding: 10px 0; /* Adjust padding */
-  border-bottom: 1px solid #333;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee; /* Bordo più chiaro su sfondo bianco */
   cursor: pointer;
 }
 
 .queue-item-info {
   flex-grow: 1;
-  margin-right: 10px; /* Space between info and potential track duration/options */
+  margin-right: 10px;
 }
 
 .queue-item-title {
-  font-weight: 500; /* Less bold than current track */
+  font-weight: 500;
+  color: #333; /* Grigio scuro per i titoli non attivi */
   font-size: 14px;
-  color: #ddd; /* Lighter color for non-playing tracks */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -636,7 +679,7 @@ body {
 
 .queue-item-artist {
   font-size: 12px;
-  color: #888; /* More subtle color */
+  color: #666; /* Grigio medio per gli artisti non attivi */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -668,7 +711,7 @@ body {
 
 .queue-item.active .queue-item-title,
 .queue-item.active .queue-item-artist {
-  color: #fff; /* White color for the playing track */
+  color: black; /* Nero per la traccia in riproduzione */
   font-weight: bold;
 }
 
