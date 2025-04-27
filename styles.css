@@ -410,7 +410,7 @@ body {
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  position: relative;
+  position: sticky;
   display: none;
 }
 
@@ -492,7 +492,7 @@ body {
 .progress-container {
   width: calc(100% - 30px);
   height: 3px;
-  background-color: #333;
+  background-color: #fff;
   margin: 0 15px;
   cursor: pointer;
   position: relative;
