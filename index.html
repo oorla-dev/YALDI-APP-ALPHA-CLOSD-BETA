@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeezy App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Main View (Albums) -->
+    <div class="app-container" id="main-view">
+        <div class="album-grid">
+            <!-- Albums will be dynamically inserted here -->
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item active" data-view="main-view">YZLY</div>
+            <div class="nav-item" data-view="stores-view">SNDLS</div>
+            <div class="nav-item" data-view="events-view">SPLY</div>
+            <div class="nav-item" data-view="hql-view">HQL</div>
+        </div>
+    </div>
+
+    <!-- Album Detail View -->
+    <div class="app-container hidden" id="album-detail-view">
+        <div class="album-header">
+            <button class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="album-title"></h1>
+        </div>
+
+        <div class="album-info">
+            <picture class="album-cover-picture">
+                <source class="album-source" srcset="" type="">
+                <img class="album-cover" src="/placeholder.svg" alt="">
+            </picture>
+            <div class="album-details">
+                <h2 class="album-title-large"></h2>
+                <p class="album-year"></p>
+                <p class="album-tracks-count"></p>
+            </div>
+        </div>
+
+        <div class="tracks-list">
+            <!-- Tracks will be dynamically inserted here -->
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item active" data-view="main-view">YZLY</div>
+            <div class="nav-item" data-view="stores-view">SNDLS</div>
+            <div class="nav-item" data-view="events-view">SPLY</div>
+            <div class="nav-item" data-view="hql-view">HQL</div>
+        </div>
+    </div>
+
+    <!-- Stores View -->
+    <div class="app-container hidden" id="stores-view">
+        <div class="store-header">
+            <div class="store-title">YALDI.IT</div>
+            <div class="store-icons">
+                <i class="fas fa-search"></i>
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+        </div>
+
+        <div class="categories">
+            <button class="category-btn active" data-category="all">ALL</button>
+            <button class="category-btn" data-category="apparel">APPAREL</button>
+            <button class="category-btn" data-category="music">MUSIC</button>
+        </div>
+
+        <div class="products-grid">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item" data-view="main-view">YZLY</div>
+            <div class="nav-item active" data-view="stores-view">SNDLS</div>
+            <div class="nav-item" data-view="events-view">SPLY</div>
+            <div class="nav-item" data-view="hql-view">HQL</div>
+        </div>
+    </div>
+
+    <!-- Events View -->
+    <div class="app-container hidden" id="events-view">
+        <div class="header">
+            <div class="header-item">LOGIN</div>
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+        </div>
+
+        <div class="menu">
+            <div class="menu-item">LATEST DROP</div>
+            <div class="menu-item">NEW RELEASES</div>
+            <div class="menu-item">NEW EVENTS</div>
+        </div>
+
+        <div class="events-grid">
+            <!-- Events will be dynamically inserted here -->
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item" data-view="main-view">YZLY</div>
+            <div class="nav-item" data-view="stores-view">SNDLS</div>
+            <div class="nav-item active" data-view="events-view">SPLY</div>
+            <div class="nav-item" data-view="hql-view">HQL</div>
+        </div>
+    </div>
+
+    <!-- HQL View -->
+    <div class="app-container hidden" id="hql-view">
+        <div class="message-container">
+            <div class="message-bubble">
+                <p>Coming soon</p>
+            </div>
+            <div class="message-info">YALDEWS • Now</div>
+
+            <div class="message-bubble message-from-y">
+                <p>MORE FEATURES COMING SOON ON NEXT UPDATE</p>
+            </div>
+            <div class="message-info message-info-y">Y • Now</div>
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item" data-view="main-view">YZLY</div>
+            <div class="nav-item" data-view="stores-view">SNDLS</div>
+            <div class="nav-item" data-view="events-view">SPLY</div>
+            <div class="nav-item active" data-view="hql-view">HQL</div>
+        </div>
+    </div>
+
+    <!-- Player Container -->
+    <div class="player-container" id="player-container">
+        <div class="expanded-player" id="expanded-player">
+            <div class="player-header">
+                <div class="back-button" id="collapse-player">
+                    <i class="fas fa-minus"></i>
+                </div>
+                <div class="album-title" id="expanded-album-title">Album Title</div>
+                <div class="options-button">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+            </div>
+
+            <div class="album-artwork">
+                <img id="expanded-artwork" src="/placeholder.svg" alt="Album Artwork" class="artwork-image">
+            </div>
+
+            <div class="track-info-large">
+                <div class="track-title-large" id="expanded-track-title">Track Title</div>
+                <div class="track-artist" id="expanded-track-artist">Artist</div>
+            </div>
+
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="time-display">
+                <span class="current-time" id="current-time">0:00</span>
+                <span class="total-time" id="total-time">0:00</span>
+            </div>
+
+            <div class="controls-large">
+                <button class="prev-btn-large" id="prev-btn-large">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button class="play-btn-large" id="play-btn-large">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="next-btn-large" id="next-btn-large">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
+
+            <div class="queue-container" id="queue-container">
+                <!-- Queue items will be dynamically inserted here -->
+            </div>
+
+            <div class="player-footer">
+                <button class="footer-btn" id="loop-btn">LOOP</button>
+                <button class="footer-btn active" id="queue-btn">QUEUE</button>
+                <button class="footer-btn" id="shuffle-btn">SHUFFLE</button>
+            </div>
+        </div>
+
+        <div class="player-bar" id="player-bar">
+            <div class="now-playing">
+                <img id="player-artwork" src="/placeholder.svg" alt="No track selected" width="50" height="50">
+                <div class="track-info">
+                    <div class="track-title" id="player-track-title">Nessuna traccia selezionata</div>
+                    <div class="track-album" id="player-track-album">Seleziona un album per iniziare</div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="prev-btn" id="prev-btn">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button class="play-btn" id="play-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="next-btn" id="next-btn">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-player"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
