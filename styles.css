@@ -480,11 +480,10 @@ body {
   display: flex;
 }
 
-.player-container.expanded .player-footer #queue-btn {
-    display: none;
-}
-.player-container.expanded .player-footer {
-    justify-content: space-around; /* O 'center' o 'flex-start' a seconda del layout desiderato */
+.player-container.expanded .player-footer .footer-btn {
+    flex-grow: 0; /* Non farli espandere per occupare tutto lo spazio, mantieni la dimensione data dal padding/contenuto */
+    flex-basis: auto; /* Lascia che la dimensione base sia automatica */
+    width: auto; /* Larghezza automatica in base al contenuto e padding */
 }
 
 .player-header {
@@ -577,7 +576,7 @@ body {
 
 .progress-bar {
   height: 100%;
-  background-color: #1db954; /* Verde Spotify per la barra di progressione riempita */
+  background-color: #333; /* Verde Spotify per la barra di progressione riempita */
   width: 0%;
   transition: width 0.1s linear;
   border-radius: 2px;
@@ -618,32 +617,43 @@ body {
 /* Menu del player in basso */
 .player-footer {
   display: flex;
-  justify-content: space-around; /* Distribute buttons evenly */
-  padding: 15px 0; /* Adjust padding */
-  margin-top: auto; /* Push to the bottom */
-  width: 100%; /* Take full width */
-  background-color: #121212; /* Match expanded player background */
-  border-top: 1px solid #333;
+  justify-content: space-around;
+  /* Rimuovi padding e margini che potrebbero interferire */
+  padding: 10px 0; /* Riduci leggermente il padding verticale */
+  margin-top: auto;
+  width: 100%;
+  background-color: white; /* Mantieni sfondo bianco come il player */
+  border-top: 1px solid #eee;
   flex-shrink: 0;
 }
+
 
 .footer-btn {
   background: none;
   border: none;
-  color: #aaa;
-  font-size: 14px; /* Slightly larger font */
   cursor: pointer;
   text-transform: uppercase;
-  padding: 10px 15px; /* Adjust padding */
+  padding: 8px 15px; /* Aggiungi padding per dare spazio allo sfondo */
   flex: 1;
   text-align: center;
   letter-spacing: 0.5px;
+  font-size: 14px;
   font-weight: 500;
+  border-radius: 20px; /* Rendi i bordi arrotondati */
+  margin: 0 5px; /* Aggiungi un piccolo margine tra i pulsanti */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Aggiungi transizione per un effetto più fluido */
+
+  /* Stato Inattivo: sfondo grigio/bianco e testo nero */
+  background-color: #eee; /* Sfondo grigio chiaro */
+  color: black; /* Testo nero */
 }
 
 .footer-btn.active {
-  color: #fff;
+  /* Stato Attivo: sfondo bianco evidenziato e testo nero */
+  background-color: white; /* Sfondo bianco */
+  color: black; /* Testo nero */
   font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Aggiungi un'ombra per evidenziare */
 }
 
 .queue-container {
@@ -714,6 +724,11 @@ body {
   color: black; /* Nero per la traccia in riproduzione */
   font-weight: bold;
 }
+
+.player-container.expanded .player-footer #queue-btn {
+    display: none;
+}
+
 
 /* Hidden class */
 .hidden {
