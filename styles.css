@@ -214,7 +214,7 @@ body {
 }
 
 .product-image {
-  width: 100%;
+  width: 130%;
   height: auto;
   border-radius: 10px;
 }
@@ -302,7 +302,7 @@ body {
 }
 
 .message-bubble {
-  background-color: #f0f0f0;
+  background-color: #a5d9fd;
   border-radius: 20px;
   padding: 15px;
   margin-bottom: 5px;
