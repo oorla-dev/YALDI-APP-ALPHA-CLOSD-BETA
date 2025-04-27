@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "YS-22", name: "YALDHI HOODIE", image: "images/hoodie.jpg", price: "€30.00", category: "apparel" },
     { id: "BL-05", name: "BULDY VINYL", image: "images/buldy.jpg", price: "€30.00", category: "music" },
   ]
-
+  const eventMenuItems = document.querySelectorAll('#events-view .menu-item');
   const events = [
     {
       title: "Y$Ø",
@@ -190,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCategoryFilters()
     setupUserInteractionTracking()
     setupAdditionalControls()
+    setupEventMenuNavigation();
 
     console.log("App initialized.")
   }
@@ -1019,7 +1020,17 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Errore nella creazione della notifica:", error);
     }
   }
-}
+    
+ function setupEventMenuNavigation() {
+        eventMenuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const targetViewId = this.getAttribute('data-view');
+                if (targetViewId) {
+                    switchView(targetViewId);
+                }
+            });
+        });
+    }
   
   // --- START APPLICATION ---
   init()
