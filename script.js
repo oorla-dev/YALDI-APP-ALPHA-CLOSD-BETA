@@ -962,6 +962,65 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  if ('Notification' in window) {
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      console.log('Permesso notifiche concesso.');
+      // Ora puoi creare e mostrare le notifiche
+    } else {
+      console.log('Permesso notifiche negato o ignorato.');
+    }
+  });
+}
+  if ('mediaSession' in navigator) {
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: track.artist || album.title,
+    album: album.title,
+    artwork: [
+      { src: album.image,   sizes: '96x96',   type: 'image/png' },
+      { src: album.image,   sizes: '128x128', type: 'image/png' },
+      { src: album.image,   sizes: '192x192', type: 'image/png' },
+      { src: album.image,   sizes: '256x256', type: 'image/png' },
+      { src: album.image,   sizes: '384x384', type: 'image/png' },
+      { src: album.image,   sizes: '512x512', type: 'image/png' }
+    ]
+  });
+
+  // Gestire le azioni multimediali (click sui controlli di sistema/notifica)
+  navigator.mediaSession.setActionHandler('play', () => { /* Gestisci l'evento play */ });
+  navigator.mediaSession.setActionHandler('pause', () => { /* Gestisci l'evento pause */ });
+  navigator.mediaSession.setActionHandler('previoustrack', () => { /* Gestisci l'evento traccia precedente */ });
+  navigator.mediaSession.setActionHandler('nexttrack', () => { /* Gestisci l'evento traccia successiva */ });
+  // Puoi aggiungere altri gestori come 'seekforward', 'seekbackward', ecc.
+}
+
+  function showTrackNotification(track, album) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    const notificationOptions = {
+      body: `${track.artist || album.title} - ${album.title}`,
+      icon: album.image, // L'artwork come icona della notifica
+      silent: true, // Di solito le notifiche musicali non emettono suono
+      // Tag opzionale per aggiornare una notifica esistente
+      tag: 'music-player-notification'
+    };
+
+    try {
+        const notification = new Notification(track.title, notificationOptions);
+
+        // (Opzionale) Gestire il click sulla notifica
+        notification.onclick = function(event) {
+            event.preventDefault(); // Impedisce al browser di mettere a fuoco la tab
+            // Puoi far qualcosa quando l'utente clicca sulla notifica, es. aprire l'app
+            console.log('Notifica cliccata');
+        };
+
+    } catch (error) {
+        console.error("Errore nella creazione della notifica:", error);
+    }
+  }
+}
+  
   // --- START APPLICATION ---
   init()
 })
