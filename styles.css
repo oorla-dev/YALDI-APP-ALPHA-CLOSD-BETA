@@ -202,29 +202,34 @@ body {
 }
 
 .products-grid {
-  /* Modifiche per allineare i prodotti in una linea */
-  display: flex; /* Usa flexbox per allineamento orizzontale */
-  /* Rimuovi le seguenti righe relative al grid layout */
-  /* grid-template-columns: repeat(2, 1fr); */
-  /* gap: 20px; */
+  /* Modifiche per allineare i prodotti in una colonna verticale */
+  display: flex; /* Usa flexbox */
+  flex-direction: column; /* Impila gli elementi in una colonna verticale */
+  /* Rimuovi le seguenti righe relative all'allineamento orizzontale */
+  /* overflow-x: auto; */
+  /* white-space: nowrap; */
+  /* align-items: flex-start; */
   padding: 20px;
   padding-bottom: 120px; /* Space for player and nav */
-  overflow-x: auto; /* Abilita scorrimento orizzontale */
-  white-space: nowrap; /* Forse tutti i prodotti su una singola linea */
-  align-items: flex-start; /* Allinea gli item all'inizio dell'asse trasversale (verticale) */
+  gap: 15px; /* Aggiungi spazio tra gli elementi flessibili (i prodotti) */
 }
 
 .product-item {
   text-align: center;
-  /* Aggiungi stili per gli elementi flex */
-  flex-shrink: 0; /* Impedisce all'elemento di rimpicciolirsi */
-  width: 180px; /* Imposta una larghezza fissa per ciascun prodotto (adatta questo valore) */
-  margin-right: 15px; /* Aggiungi spazio tra i prodotti */
+  /* Rimuovi stili per l'allineamento orizzontale */
+  /* flex-shrink: 0; */
+  /* width: 180px; */
+  /* margin-right: 15px; */
   white-space: normal; /* Permetti al testo all'interno di andare a capo */
+  /* Imposta la larghezza al 100% del contenitore (con padding) */
+  width: 100%;
+  box-sizing: border-box; /* Include padding/border nel calcolo della larghezza */
+  /* Aggiungi margine inferiore per separare gli elementi */
+  /* margin-bottom: 15px; */ /* Rimosso perché usiamo 'gap' sul contenitore */
 }
 
 .product-image {
-  width: 100%; /* L'immagine occupa il 100% della larghezza del suo contenitore */
+  width: 100%;
   height: auto;
   border-radius: 10px;
 }
@@ -405,13 +410,16 @@ body {
 .progress-container {
   width: 100%;
   height: 4px;
-  /* Modifica: Sfondo nero per tutta la barra */
-  background-color: black; /* La parte 'vuota' è nera */
+  background-color: black; /* Sfondo nero */
   margin: 10px 0;
   cursor: pointer;
-  position: relative; /* Necessario per posizionare l'handle assolutamente */
+  position: relative;
   border-radius: 2px;
+  /* Aggiunte per debug/sicurezza layout */
+  flex-shrink: 0; /* Impedisce al contenitore di ridursi */
+  box-sizing: border-box; /* Assicura che padding/border siano inclusi nella dimensione */
 }
+
 
 .expanded-player .controls-large button {
     color: black;
@@ -587,28 +595,28 @@ body {
 
 .progress-bar {
   height: 100%;
-  /* Modifica: Anche la parte riempita è nera */
-  background-color: black; /* La parte 'riempita' è nera */
-  width: 0%; /* Questo valore sarà aggiornato dal JavaScript */
+  background-color: black; /* Anche la parte riempita è nera */
+  width: 0%; /* Inizialmente 0, aggiornato da JS */
   transition: width 0.1s linear;
   border-radius: 2px;
-  position: relative; /* Necessario per posizionare l'handle relativamente alla barra riempita */
+  position: relative;
+  /* Aggiunte per debug/sicurezza layout */
+  box-sizing: border-box;
 }
 
 /* Aggiungi l'handle scorrevole */
 .progress-bar::after {
-    content: ''; /* Contenuto vuoto per uno pseudo-elemento */
-    display: block; /* Rendi l'elemento un blocco */
-    width: 12px; /* Larghezza dell'handle (punto) */
-    height: 12px; /* Altezza dell'handle (punto) */
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
     background-color: white; /* Colore del punto (bianco per contrasto) */
-    border-radius: 50%; /* Rendi l'elemento un cerchio */
-    position: absolute; /* Posiziona l'handle assolutamente */
-    top: 50%; /* Centra verticalmente */
-    right: -6px; /* Sposta l'handle a destra in modo che metà sia sulla barra e metà fuori (metà della larghezza) */
-    transform: translateY(-50%); /* Completa il centraggio verticale */
-    z-index: 1; /* Assicura che l'handle sia sopra la barra */
-    /* Aggiungi uno stile per indicare che è trascinabile (opzionale) */
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    right: -6px;
+    transform: translateY(-50%);
+    z-index: 2; /* Aumenta lo z-index per sicurezza */
     cursor: grab;
 }
 
@@ -692,11 +700,12 @@ body {
   margin-top: 10px;
   margin-bottom: 15px;
   width: 100%;
+  display: none;
   flex-grow: 1;
 }
 
 .queue-item {
-  display: flex;
+  display: none;
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #eee; /* Bordo più chiaro su sfondo bianco */
