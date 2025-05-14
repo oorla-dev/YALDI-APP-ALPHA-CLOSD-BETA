@@ -1,206 +1,1886 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Yeezy App</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        html,
+        body {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          overscroll-behavior: none;
+          touch-action: manipulation;
+        }
+        
+        body {
+          color: #000;
+          background: white;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        
+        body.player-expanded {
+          overflow: hidden;
+        }
+        
+        .app-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          max-width: 500px;
+          margin: 0 auto;
+          height: 100%;
+          overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          background-color: white;
+          overscroll-behavior: contain;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          max-width: 500px;
+          margin: 0 auto;
+          height: 60px;
+          background-color: white;
+          border-top: 1px solid #eee;
+          z-index: 1000;
+        }
+        
+        .nav-item {
+          flex: 1;
+          text-align: center;
+          padding: 10px 0;
+          font-weight: bold;
+          cursor: pointer;
+        }
+        
+        .nav-item.active {
+          color: black;
+          border-top: 2px solid black;
+        }
+        
+        .nav-item:not(.active) {
+          color: #999;
+        }
+        
+        /* Album Grid */
+        .album-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+          padding: 20px;
+          padding-bottom: 120px; /* Space for player and nav */
+        }
+        
+        .album-item {
+          cursor: pointer;
+        }
+        
+        .album-item img {
+          width: 100%;
+          height: auto;
+          border-radius: 5px;
+        }
+        
+        .album-title {
+          font-weight: bold;
+          margin-top: 5px;
+        }
+        
+        .album-year {
+          color: #666;
+          font-size: 0.9rem;
+        }
+        
+        /* Album Detail */
+        .album-header {
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          background-color: #f8f8f8;
+        }
+        
+        .back-btn {
+          background: none;
+          border: none;
+          font-size: 1.2rem;
+          margin-right: 15px;
+          cursor: pointer;
+        }
+        
+        .album-info {
+          display: flex;
+          padding: 20px;
+          background-color: #f8f8f8;
+        }
+        
+        .album-cover {
+          width: 120px;
+          height: 120px;
+          border-radius: 5px;
+        }
+        
+        .album-details {
+          margin-left: 15px;
+        }
+        
+        .album-title-large {
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
+        
+        .album-tracks-count {
+          color: #666;
+          margin-top: 5px;
+        }
+        
+        .tracks-list {
+          padding: 0 20px;
+          margin-bottom: 120px; /* Space for player and nav */
+        }
+        
+        .track-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 0;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+        }
+        
+        .track-left {
+          display: flex;
+          align-items: center;
+        }
+        
+        .track-icon {
+          margin-right: 15px;
+          color: #999;
+        }
+        
+        .track-icon.active {
+          color: black;
+        }
+        
+        .track-name {
+          font-weight: 500;
+        }
+        
+        .track-duration {
+          color: #999;
+        }
+        
+        .track-item.active .track-name {
+          color: black;
+          font-weight: bold;
+        }
+        
+        /* Store */
+        .store-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          background-color: #f8f8f8;
+        }
+        
+        .store-title {
+          font-weight: bold;
+          font-size: 1.2rem;
+        }
+        
+        .store-icons {
+          display: flex;
+          gap: 15px;
+        }
+        
+        .categories {
+          display: flex;
+          padding: 10px 20px;
+          border-bottom: 1px solid #eee;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        
+        .category-btn {
+          background: none;
+          border: none;
+          padding: 5px 15px;
+          margin-right: 10px;
+          cursor: pointer;
+          font-weight: 500;
+        }
+        
+        .category-btn.active {
+          color: black;
+          border-bottom: 2px solid black;
+        }
+        
+        .products-grid {
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          padding-bottom: 120px; /* Space for player and nav */
+          gap: 15px;
+        }
+        
+        .product-item {
+          text-align: center;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .product-image {
+          width: 100%;
+          height: auto;
+          border-radius: 10px;
+        }
+        
+        .product-id {
+          color: #999;
+          font-size: 0.8rem;
+          margin-top: 5px;
+        }
+        
+        .product-name {
+          font-weight: bold;
+          margin: 5px 0;
+        }
+        
+        .product-price {
+          font-weight: 500;
+        }
+        
+        /* Events */
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          background-color: #f8f8f8;
+        }
+        
+        .header-item {
+          font-weight: bold;
+        }
+        
+        .menu {
+          display: flex;
+          justify-content: space-around;
+          padding: 15px 0;
+          border-bottom: 1px solid #eee;
+        }
+        
+        .menu-item {
+          font-weight: 500;
+          cursor: pointer;
+        }
+        
+        .events-grid {
+          padding: 20px;
+          padding-bottom: 120px; /* Space for player and nav */
+        }
+        
+        .event-card {
+          background-color: #f8f8f8;
+          border-radius: 10px;
+          padding: 20px;
+          margin-bottom: 20px;
+        }
+        
+        .event-title {
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
+        
+        .event-subtitle {
+          font-weight: 500;
+          margin-bottom: 10px;
+        }
+        
+        .event-desc {
+          margin-bottom: 15px;
+        }
+        
+        .event-location,
+        .event-venue {
+          color: #666;
+        }
+        
+        .event-date {
+          font-weight: bold;
+          margin-top: 10px;
+        }
+        
+        /* HQL */
+        .message-container {
+          padding: 20px;
+          padding-bottom: 120px; /* Space for player and nav */
+        }
+        
+        .message-bubble {
+          background-color: #a5d9fd;
+          border-radius: 20px;
+          padding: 15px;
+          margin-bottom: 5px;
+          max-width: 80%;
+        }
+        
+        .message-from-y {
+          background-color: #fff;
+          color: black;
+          margin-left: auto;
+        }
+        
+        .message-info {
+          font-size: 0.8rem;
+          color: #999;
+          margin-bottom: 20px;
+        }
+        
+        .message-info-y {
+          text-align: right;
+        }
+        
+        /* Player Container */
+        .player-container {
+          position: fixed;
+          bottom: 60px; /* Stays above the bottom nav bar in collapsed state */
+          left: 0;
+          right: 0;
+          max-width: 500px;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          z-index: 900;
+          background-color: white; /* Background for the mini-player bar */
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+          transition: bottom 0.3s ease, top 0.3s ease, height 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        /* Expanded state for Player Container */
+        .player-container.expanded {
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100vw;
+          height: 100vh;
+          max-width: none;
+          margin: 0;
+          transform: translateY(0);
+          z-index: 1050;
+          background-color: white;
+          overflow: hidden;
+        }
+        
+        /* Player Bar (the mini player) */
+        .player-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 15px;
+          background-color: white;
+          color: black;
+          border-top: 1px solid #eee;
+          cursor: pointer;
+          opacity: 1;
+          visibility: visible;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .expanded-player .track-info-large .track-title-large,
+        .expanded-player .track-info-large .track-artist,
+        .expanded-player .player-header .album-title {
+          color: black;
+        }
+        
+        .expanded-player .player-footer .footer-btn {
+          color: #333;
+          font-weight: 500;
+        }
+        
+        .expanded-player .player-footer .footer-btn.active {
+          color: black;
+          font-weight: bold;
+        }
+        
+        .progress-container {
+          width: 100%;
+          height: 4px;
+          background-color: black;
+          margin: 10px 0;
+          cursor: pointer;
+          position: relative;
+          border-radius: 2px;
+          flex-shrink: 0;
+          box-sizing: border-box;
+        }
+        
+        .expanded-player .controls-large button {
+          color: black;
+        }
+        
+        .now-playing {
+          display: flex;
+          align-items: center;
+        }
+        
+        .now-playing img {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          border-radius: 5px;
+          margin-right: 10px;
+        }
+        
+        .track-info {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .track-title {
+          font-weight: bold;
+        }
+        
+        .track-album {
+          font-size: 0.8rem;
+          color: #888;
+        }
+        
+        .controls {
+          display: flex;
+          gap: 15px;
+        }
+        
+        .controls button {
+          background: none;
+          border: none;
+          font-size: 18px;
+          cursor: pointer;
+        }
+        
+        .controls button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        
+        /* Expanded Player */
+        .expanded-player {
+          height: 100%;
+          width: 100%;
+          background-color: white;
+          color: black;
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 20px;
+          padding-left: 20px;
+          padding-right: 20px;
+          overflow-y: auto;
+          position: relative;
+          box-sizing: border-box;
+        }
+        
+        .player-container.expanded .player-bar {
+          opacity: 0;
+          visibility: hidden;
+          height: 0;
+          padding: 0 15px;
+        }
+        
+        .player-container.expanded .expanded-player {
+          display: flex;
+        }
+        
+        .player-container.expanded .player-footer .footer-btn {
+          flex-grow: 0;
+          flex-basis: auto;
+          width: auto;
+        }
+        
+        .player-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 0 10px 20px 10px;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+        
+        .back-button,
+        .options-button {
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+        
+        .album-title {
+          font-weight: bold;
+          text-transform: uppercase;
+          text-align: center;
+          flex-grow: 1;
+          font-size: 14px;
+          letter-spacing: 0.5px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 70%;
+        }
+        
+        .album-artwork {
+          width: 80%;
+          max-width: 300px;
+          height: auto;
+          margin: 20px auto;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-shrink: 0;
+        }
+        
+        .artwork-image {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .track-info-large {
+          padding: 20px 15px;
+          text-align: center;
+          width: 100%;
+          flex-shrink: 0;
+        }
+        
+        .track-title-large {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 8px;
+          text-transform: uppercase;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .track-artist {
+          color: #aaa;
+          font-size: 16px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .progress-container {
+          width: calc(100% - 40px);
+          height: 4px;
+          background-color: #444;
+          margin: 10px 20px;
+          cursor: pointer;
+          position: relative;
+          border-radius: 2px;
+        }
+        
+        .progress-bar {
+          height: 100%;
+          background-color: black;
+          width: 0%;
+          transition: width 0.1s linear;
+          border-radius: 2px;
+          position: relative;
+          box-sizing: border-box;
+        }
+        
+        .progress-bar::after {
+          content: "";
+          display: block;
+          width: 12px;
+          height: 12px;
+          background-color: white;
+          border-radius: 50%;
+          position: absolute;
+          top: 50%;
+          right: -6px;
+          transform: translateY(-50%);
+          z-index: 2;
+          cursor: grab;
+        }
+        
+        .time-display {
+          display: flex;
+          justify-content: space-between;
+          font-size: 12px;
+          color: black;
+          padding: 5px 20px;
+          width: 100%;
+          flex-shrink: 0;
+        }
+        
+        .controls-large {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 40px;
+          margin: 20px 0;
+          flex-shrink: 0;
+        }
+        
+        .controls-large button {
+          background: none;
+          border: none;
+          font-size: 28px;
+          cursor: pointer;
+          color: #fff;
+          padding: 10px;
+        }
+        
+        .controls-large .play-btn-large {
+          font-size: 60px;
+        }
+        
+        .player-footer {
+          display: flex;
+          justify-content: center;
+          padding: 10px 0;
+          margin-top: auto;
+          width: 100%;
+          background-color: white;
+          border-top: 1px solid #eee;
+          flex-shrink: 0;
+        }
+        
+        .player-controls-center {
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+        }
+        
+        .footer-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-transform: uppercase;
+          padding: 8px 15px;
+          text-align: center;
+          letter-spacing: 0.5px;
+          font-size: 14px;
+          font-weight: 500;
+          border-radius: 20px;
+          transition: background-color 0.3s ease, color 0.3s ease;
+          background-color: #eee;
+          color: black;
+        }
+        
+        .footer-btn.active {
+          background-color: white;
+          color: black;
+          font-weight: bold;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Album overlay */
+        .album-image-container {
+          position: relative;
+        }
+        
+        .album-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(0, 0, 0, 0.5);
+          border-radius: 5px;
+        }
+        
+        .album-overlay span {
+          color: white;
+          font-weight: bold;
+          font-size: 1.2rem;
+        }
+        
+        *:focus,
+        *:active {
+          outline: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        input:focus,
+        button:focus,
+        select:focus,
+        textarea:focus {
+          outline: none;
+        }
+        
+        a:focus,
+        a:active {
+          outline: none;
+        }
+        
+        .hidden {
+          display: none;
+        }
+        
+        /* Lyrics Styles */
+        .lyrics-container {
+          width: 100%;
+          margin-top: 10px;
+          flex-shrink: 0;
+          flex-grow: 1;
+          overflow-y: auto;
+        }
+        
+        .lyrics-container.expanded {
+          flex-grow: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .lyrics-preview {
+          background-color: #f5f5f5;
+          border-radius: 10px;
+          padding: 15px;
+          margin: 0 15px;
+        }
+        
+        .lyrics-preview-header {
+          font-size: 14px;
+          color: #666;
+          margin-bottom: 10px;
+        }
+        
+        .lyrics-preview-content {
+          margin-bottom: 15px;
+        }
+        
+        .lyrics-line {
+          margin: 8px 0;
+          font-size: 16px;
+          color: #666;
+          transition: color 0.3s ease;
+        }
+        
+        .lyrics-line.current {
+          color: #000;
+          font-weight: 500;
+        }
+        
+        .lyrics-line.clickable {
+          cursor: pointer;
+          position: relative;
+          padding: 4px 8px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+        }
+        
+        .lyrics-line.clickable:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .lyrics-line.clickable:active {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .show-lyrics-btn {
+          background-color: white;
+          border: none;
+          border-radius: 20px;
+          padding: 8px 20px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #000;
+          cursor: pointer;
+          display: block;
+          margin: 0 auto;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lyrics-full {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          background-color: #f5f5f5;
+          height: 100%;
+          overflow-y: auto;
+        }
+        
+        .lyrics-full-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 20px 0;
+        }
+        
+        .lyrics-full .lyrics-line {
+          text-align: center;
+          margin: 12px 0;
+          font-size: 18px;
+          color: #666;
+        }
+        
+        .lyrics-full .lyrics-line.current {
+          color: #000;
+          font-weight: 600;
+          font-size: 20px;
+        }
+        
+        .lyrics-full .lyrics-line.clickable {
+          padding: 6px 12px;
+          margin: 4px 0;
+          width: 80%;
+        }
+    </style>
 </head>
 <body>
-    <!-- Main View (Albums) -->
-    <div class="app-container" id="main-view">
-        <div class="album-grid">
-            <!-- Albums will be dynamically inserted here -->
-        </div>
-        <div class="nav-bar">
-            <div class="nav-item active" data-view="main-view">YZLY</div>
-            <div class="nav-item" data-view="stores-view">SNDLS</div>
-            <div class="nav-item" data-view="events-view">SPLY</div>
-            <div class="nav-item" data-view="hql-view">HQL</div>
-        </div>
+    <div class="app-container" id="app-container">
+        <!-- Main content will be loaded here -->
     </div>
 
-    <!-- Album Detail View -->
-    <div class="app-container hidden" id="album-detail-view">
-        <div class="album-header">
-            <button class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h1 class="album-title"></h1>
-        </div>
+    <script>
+        // Prevent zooming and panning
+        function preventZoom() {
+            // Prevent pinch zoom
+            document.addEventListener(
+                "touchmove",
+                (event) => {
+                    if (event.scale !== 1) {
+                        event.preventDefault();
+                    }
+                },
+                { passive: false }
+            );
 
-        <div class="album-info">
-            <picture class="album-cover-picture">
-                <source class="album-source" srcset="" type="">
-                <img class="album-cover" src="/placeholder.svg" alt="">
-            </picture>
-            <div class="album-details">
-                <h2 class="album-title-large"></h2>
-                <p class="album-year"></p>
-                <p class="album-tracks-count"></p>
-            </div>
-        </div>
+            // Prevent double-tap to zoom
+            let lastTouchEnd = 0;
+            document.addEventListener(
+                "touchend",
+                (event) => {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                        event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                },
+                { passive: false }
+            );
 
-        <div class="tracks-list">
-            <!-- Tracks will be dynamically inserted here -->
-        </div>
-        <div class="nav-bar">
-            <div class="nav-item active" data-view="main-view">YZLY</div>
-            <div class="nav-item" data-view="stores-view">SNDLS</div>
-            <div class="nav-item" data-view="events-view">SPLY</div>
-            <div class="nav-item" data-view="hql-view">HQL</div>
-        </div>
-    </div>
+            // Add CSS to prevent text selection
+            const style = document.createElement("style");
+            style.innerHTML = `
+                * {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                    -webkit-tap-highlight-color: transparent;
+                }
+                
+                input, textarea {
+                    -webkit-user-select: auto;
+                    -khtml-user-select: auto;
+                    -moz-user-select: auto;
+                    -ms-user-select: auto;
+                    user-select: auto;
+                }
+            `;
+            document.head.appendChild(style);
 
-    <!-- Stores View -->
-    <div class="app-container hidden" id="stores-view">
-        <div class="store-header">
-            <div class="store-title">YALDI.IT</div>
-            <div class="store-icons">
-                <i class="fas fa-search"></i>
-                <i class="fas fa-shopping-bag"></i>
-            </div>
-        </div>
+            // Prevent context menu
+            document.addEventListener("contextmenu", (e) => e.preventDefault());
 
-        <div class="categories">
-            <button class="category-btn active" data-category="all">ALL</button>
-            <button class="category-btn" data-category="apparel">APPAREL</button>
-            <button class="category-btn" data-category="music">MUSIC</button>
-        </div>
+            // Prevent default touch actions
+            document.body.style.touchAction = "manipulation";
+        }
 
-        <div class="products-grid">
-            <!-- Products will be dynamically inserted here -->
-        </div>
-        <div class="nav-bar">
-            <div class="nav-item" data-view="main-view">YZLY</div>
-            <div class="nav-item active" data-view="stores-view">SNDLS</div>
-            <div class="nav-item" data-view="events-view">SPLY</div>
-            <div class="nav-item" data-view="hql-view">HQL</div>
-        </div>
-    </div>
+        // Data
+        const gardenOfAldiLyrics = [
+            { text: "Welcome to the garden of ALDI", startTime: 0, endTime: 4 },
+            { text: "Where everything is cheaper", startTime: 4, endTime: 8 },
+            { text: "But the quality is still high", startTime: 8, endTime: 12 },
+            { text: "ALDI, ALDI, ALDI", startTime: 12, endTime: 16 },
+            { text: "I love shopping at ALDI", startTime: 16, endTime: 20 },
+            { text: "Saving money every day", startTime: 20, endTime: 24 },
+            { text: "ALDI is the way", startTime: 24, endTime: 28 },
+            { text: "The garden of ALDI is where I want to be", startTime: 28, endTime: 32 },
+            { text: "Shopping for groceries", startTime: 32, endTime: 36 },
+            { text: "At prices so low", startTime: 36, endTime: 40 },
+            { text: "ALDI, ALDI, ALDI", startTime: 40, endTime: 44 },
+            { text: "The garden of ALDI", startTime: 44, endTime: 48 },
+        ];
 
-    <!-- Events View -->
-     <div class="app-container hidden" id="events-view">
-        <div class="header">
-            <div class="header-item"> </div>
-            <div class="notification-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-        </div>
+        const aldiStormLyrics = [
+            { text: "The ALDI storm is coming", startTime: 0, endTime: 4 },
+            { text: "Prices dropping everywhere", startTime: 4, endTime: 8 },
+            { text: "Can't stop the ALDI storm", startTime: 8, endTime: 12 },
+            { text: "Competitors beware", startTime: 12, endTime: 16 },
+            { text: "The ALDI storm is raging", startTime: 16, endTime: 20 },
+            { text: "Savings falling from the sky", startTime: 20, endTime: 24 },
+            { text: "The ALDI storm is here", startTime: 24, endTime: 28 },
+            { text: "Prices never been so low", startTime: 28, endTime: 32 },
+            { text: "The ALDI storm is powerful", startTime: 32, endTime: 36 },
+            { text: "Changing how we shop", startTime: 36, endTime: 40 },
+            { text: "The ALDI storm is unstoppable", startTime: 40, endTime: 44 },
+            { text: "ALDI, ALDI, ALDI storm", startTime: 44, endTime: 48 },
+        ];
 
-        <div class="menu">
-            <div class="menu-item" data-view="events-view">NEW EVENTS</div>
-        </div>
+        const newAldiLyrics = [
+            { text: "This is the new ALDI", startTime: 0, endTime: 4 },
+            { text: "Reinvented for you", startTime: 4, endTime: 8 },
+            { text: "Better than ever before", startTime: 8, endTime: 12 },
+            { text: "The new ALDI experience", startTime: 12, endTime: 16 },
+            { text: "Fresh produce, fresh look", startTime: 16, endTime: 20 },
+            { text: "Same low prices you love", startTime: 20, endTime: 24 },
+            { text: "Welcome to the new ALDI", startTime: 24, endTime: 28 },
+            { text: "Where shopping is a pleasure", startTime: 28, endTime: 32 },
+            { text: "New ALDI, new day", startTime: 32, endTime: 36 },
+            { text: "New way to save", startTime: 36, endTime: 40 },
+            { text: "New ALDI, same heart", startTime: 40, endTime: 44 },
+            { text: "Always for the people", startTime: 44, endTime: 48 },
+        ];
 
-        <div class="events-grid">
-            </div>
-        <div class="nav-bar">
-            <div class="nav-item" data-view="main-view">YZLY</div>
-            <div class="nav-item" data-view="stores-view">SNDLS</div>
-            <div class="nav-item active" data-view="events-view">SPLY</div>
-            <div class="nav-item" data-view="hql-view">HQL</div>
-        </div>
-    </div>
+        const aldyiesLyrics = [
+            { text: "Back in the 80s, ALDI was the place", startTime: 0, endTime: 4 },
+            { text: "Retro vibes and savings", startTime: 4, endTime: 8 },
+            { text: "80 ALDYIES, remember those days", startTime: 8, endTime: 12 },
+            { text: "When shopping was simpler", startTime: 12, endTime: 16 },
+            { text: "Neon lights and discount signs", startTime: 16, endTime: 20 },
+            { text: "80 ALDYIES, feeling so fine", startTime: 20, endTime: 24 },
+            { text: "Cassette tapes and ALDI brands", startTime: 24, endTime: 28 },
+            { text: "80 ALDYIES, take my hand", startTime: 28, endTime: 32 },
+            { text: "Let's go back to the 80 ALDYIES", startTime: 32, endTime: 36 },
+            { text: "When prices were low and spirits high", startTime: 36, endTime: 40 },
+            { text: "80 ALDYIES, never die", startTime: 40, endTime: 44 },
+            { text: "ALDI forever in our hearts", startTime: 44, endTime: 48 },
+        ];
 
-    <!-- HQL View -->
-    <div class="app-container hidden" id="hql-view">
-        <div class="message-container">
-            <div class="message-bubble">
-                <p>Coming soon</p>
-            </div>
-            <div class="message-info">YALDEWS • Now</div>
+        const aldiInTheSkyLyrics = [
+            { text: "Look up and see ALDI in the sky", startTime: 0, endTime: 4 },
+            { text: "With diamonds of savings", startTime: 4, endTime: 8 },
+            { text: "ALDI in the sky, so high", startTime: 8, endTime: 12 },
+            { text: "Beyond the clouds of high prices", startTime: 12, endTime: 16 },
+            { text: "ALDI in the sky with stars", startTime: 16, endTime: 20 },
+            { text: "Shining bright for everyone", startTime: 20, endTime: 24 },
+            { text: "ALDI in the sky, so far", startTime: 24, endTime: 28 },
+            { text: "Yet close to our hearts", startTime: 28, endTime: 32 },
+            { text: "When you see ALDI in the sky", startTime: 32, endTime: 36 },
+            { text: "Make a wish for lower prices", startTime: 36, endTime: 40 },
+            { text: "ALDI in the sky, never lie", startTime: 40, endTime: 44 },
+            { text: "Always true to their promise", startTime: 44, endTime: 48 },
+        ];
 
-            <div class="message-bubble message-from-y">
-                <p>MORE FEATURES COMING SOON ON NEXT UPDATE</p>
-            </div>
-            <div class="message-info message-info-y">Y • Now</div>
-        </div>
-        <div class="nav-bar">
-            <div class="nav-item" data-view="main-view">YZLY</div>
-            <div class="nav-item" data-view="stores-view">SNDLS</div>
-            <div class="nav-item" data-view="events-view">SPLY</div>
-            <div class="nav-item active" data-view="hql-view">HQL</div>
-        </div>
-    </div>
+        const aldienLyrics = [
+            { text: "I feel like an ALDIEN", startTime: 0, endTime: 4 },
+            { text: "Shopping in a strange land", startTime: 4, endTime: 8 },
+            { text: "But the prices make me feel at home", startTime: 8, endTime: 12 },
+            { text: "ALDIEN, ALDIEN, ALDIEN", startTime: 12, endTime: 16 },
+            { text: "I'm an ALDIEN in this world", startTime: 16, endTime: 20 },
+            { text: "But ALDI understands me", startTime: 20, endTime: 24 },
+            { text: "ALDIEN is what I am", startTime: 24, endTime: 28 },
+            { text: "Shopping at ALDI like an ALDIEN", startTime: 28, endTime: 32 },
+            { text: "In this universe of high prices", startTime: 32, endTime: 36 },
+            { text: "ALDI is my planet", startTime: 36, endTime: 40 },
+            { text: "ALDIEN, ALDIEN, ALDIEN", startTime: 40, endTime: 44 },
+            { text: "I am an ALDIEN", startTime: 44, endTime: 48 },
+        ];
 
-    <!-- Player Container -->
-    <div class="player-container" id="player-container">
-        <div class="expanded-player" id="expanded-player">
-            <div class="player-header">
-                <div class="back-button" id="collapse-player">
-                    <i class="fas fa-minus"></i>
+        const brothersOfAldiLyrics = [
+            { text: "We are the brothers of ALDI", startTime: 0, endTime: 4 },
+            { text: "United by savings and quality", startTime: 4, endTime: 8 },
+            { text: "Brothers of ALDI, stand tall", startTime: 8, endTime: 12 },
+            { text: "Together we'll never fall", startTime: 12, endTime: 16 },
+            { text: "From one store to a global family", startTime: 16, endTime: 20 },
+            { text: "Brothers of ALDI, can't you see", startTime: 20, endTime: 24 },
+            { text: "The legacy we've built", startTime: 24, endTime: 28 },
+            { text: "Brothers of ALDI, no guilt", startTime: 28, endTime: 32 },
+            { text: "For offering the best at low cost", startTime: 32, endTime: 36 },
+            { text: "Brothers of ALDI, never lost", startTime: 36, endTime: 40 },
+            { text: "Our way in the retail world", startTime: 40, endTime: 44 },
+            { text: "Brothers of ALDI forever", startTime: 44, endTime: 48 },
+        ];
+
+        const gianvoitLyrics = [
+            { text: "FVCK GIANVOIT, yeah", startTime: 0, endTime: 4 },
+            { text: "He doesn't shop at ALDI", startTime: 4, endTime: 8 },
+            { text: "He pays full price", startTime: 8, endTime: 12 },
+            { text: "FVCK GIANVOIT, he's missing out", startTime: 12, endTime: 16 },
+            { text: "While we save money", startTime: 16, endTime: 20 },
+            { text: "GIANVOIT shops at expensive stores", startTime: 20, endTime: 24 },
+            { text: "But we know better", startTime: 24, endTime: 28 },
+            { text: "FVCK GIANVOIT and his expensive taste", startTime: 28, endTime: 32 },
+            { text: "ALDI is the future", startTime: 32, endTime: 36 },
+            { text: "GIANVOIT is the past", startTime: 36, endTime: 40 },
+            { text: "FVCK GIANVOIT, yeah", startTime: 40, endTime: 44 },
+            { text: "ALDI for life", startTime: 44, endTime: 48 },
+        ];
+
+        const albums = [
+            {
+                id: 1,
+                title: "YALDHI",
+                year: "2025",
+                image: "/images/yaldhi.png",
+                available: true,
+                tracks: [
+                    {
+                        id: 101,
+                        title: "THE GARDEN OF ALDI",
+                        artist: "YE",
+                        duration: "3:05",
+                        audioSrc: "YALDHI/01 THE GARDEN OF ALDI.mp3",
+                        lyrics: gardenOfAldiLyrics,
+                    },
+                    {
+                        id: 102,
+                        title: "THE ALDI STORM",
+                        artist: "YE",
+                        duration: "3:38",
+                        audioSrc: "YALDHI/02 THE ALDI STORM.m4a",
+                        lyrics: aldiStormLyrics,
+                    },
+                    {
+                        id: 103,
+                        title: "NEW ALDI",
+                        artist: "YE",
+                        duration: "4:00",
+                        audioSrc: "YALDHI/03 NEW ALDI.mp3",
+                        lyrics: newAldiLyrics,
+                    },
+                    {
+                        id: 104,
+                        title: "80 ALDYIES",
+                        artist: "YE",
+                        duration: "2:48",
+                        audioSrc: "YALDHI/04 80 ALDYIES.m4a",
+                        lyrics: aldyiesLyrics,
+                    },
+                    {
+                        id: 105,
+                        title: "ALDI IN THE SKY",
+                        artist: "YE",
+                        duration: "4:44",
+                        audioSrc: "YALDHI/05 ALDI IN THE SKY.mp3",
+                        lyrics: aldiInTheSkyLyrics,
+                    },
+                    {
+                        id: 106,
+                        title: "ALDIEN",
+                        artist: "YE",
+                        duration: "2:04",
+                        audioSrc: "YALDHI/06 ALDIEN.mp3",
+                        lyrics: aldienLyrics,
+                    },
+                    {
+                        id: 107,
+                        title: "BROTHERS OF ALDI",
+                        artist: "YE",
+                        duration: "4:15",
+                        audioSrc: "YALDHI/07 BROTHERS OF ALDI.mp3",
+                        lyrics: brothersOfAldiLyrics,
+                    },
+                    {
+                        id: 108,
+                        title: "FVCK GIANVOIT",
+                        artist: "YE",
+                        duration: "2:00",
+                        audioSrc: "YALDHI/08 FVCK GIANVOIT.mp3",
+                        lyrics: gianvoitLyrics,
+                    },
+                ],
+            }
+        ];
+
+        const products = [
+            { id: "AY-01", name: "YALDHI CD", image: "/images/yaldhicd.png", price: "€30.00", category: "music" },
+            { id: "FM-104", name: "FREE MARINAIO TEE", image: "/images/fm.jpg", price: "€30.00", category: "apparel" },
+            { id: "YS-22", name: "YALDHI HOODIE", image: "/images/hoodie.jpg", price: "€30.00", category: "apparel" },
+            { id: "BL-05", name: "BULDY VINYL", image: "/images/buldy.jpg", price: "€30.00", category: "music" },
+        ];
+
+        const events = [
+            {
+                title: "Y$Ø",
+                subtitle: "YALDHI",
+                desc: "LISTENING EXPERIENCE",
+                location: "PERUGIA",
+                venue: "DISCALDI ARENA",
+                date: "1 4 25",
+            },
+            {
+                title: "YE",
+                subtitle: "DONDA 2",
+                desc: "LISTENING EXPERIENCE",
+                location: "PESARO",
+                venue: "DISCALDI ARENA",
+                date: "4 9 25",
+            },
+        ];
+
+        // Global state
+        let currentView = 'main';
+        let currentAlbum = null;
+        let currentTrack = null;
+        let isPlaying = false;
+        let isPlayerExpanded = false;
+        let isLoopActive = false;
+        let isShuffleActive = false;
+        let isLyricsExpanded = false;
+        let currentTime = 0;
+        let duration = 0;
+        let audioElement = null;
+        let progressBarElement = null;
+        let currentLineIndex = -1;
+
+        // Initialize the app
+        function initApp() {
+            preventZoom();
+            audioElement = document.createElement('audio');
+            document.body.appendChild(audioElement);
+            
+            renderMainView();
+            setupEventListeners();
+        }
+
+        // Render functions
+        function renderMainView() {
+            const appContainer = document.getElementById('app-container');
+            appContainer.innerHTML = `
+                <main>
+                    <div class="album-grid">
+                        ${albums.map(album => `
+                            <div class="album-item" data-album-id="${album.id}">
+                                <div class="album-image-container">
+                                    <img src="${album.image}" alt="${album.title} cover" width="200" height="200">
+                                    ${!album.available ? `
+                                        <div class="album-overlay">
+                                            <span>COMING SOON</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="album-title">${album.title}</div>
+                                <div class="album-year">${album.year}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${renderPlayer()}
+                    ${renderNavigation('main-view')}
+                </main>
+            `;
+            
+            // Add event listeners for album items
+            document.querySelectorAll('.album-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const albumId = parseInt(item.getAttribute('data-album-id'));
+                    const album = albums.find(a => a.id === albumId);
+                    if (album && album.available) {
+                        currentAlbum = album;
+                        renderAlbumDetailView(album);
+                    }
+                });
+            });
+        }
+
+        function renderAlbumDetailView(album) {
+            currentView = 'album';
+            const appContainer = document.getElementById('app-container');
+            appContainer.innerHTML = `
+                <div>
+                    <div class="album-header">
+                        <button class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h1 class="album-title">${album.title}</h1>
+                    </div>
+
+                    <div class="album-info">
+                        <img class="album-cover" src="${album.image}" alt="${album.title} album cover" width="120" height="120">
+                        <div class="album-details">
+                            <h2 class="album-title-large">${album.title}</h2>
+                            <p class="album-year">${album.year}</p>
+                            <p class="album-tracks-count">${album.tracks.length} brani</p>
+                        </div>
+                    </div>
+
+                    <div class="tracks-list">
+                        ${album.tracks.map(track => `
+                            <div class="track-item ${currentTrack && currentTrack.id === track.id ? 'active' : ''}" data-track-id="${track.id}">
+                                <div class="track-left">
+                                    <i class="fas ${currentTrack && currentTrack.id === track.id ? (isPlaying ? 'fa-volume-up' : 'fa-pause') : 'fa-music'} track-icon ${currentTrack && currentTrack.id === track.id ? 'active' : ''}"></i>
+                                    <span class="track-name">${track.title}</span>
+                                </div>
+                                <div class="track-duration">${track.duration}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${renderPlayer()}
+                    ${renderNavigation('main-view')}
                 </div>
-                <div class="album-title" id="expanded-album-title">Album Title</div>
-                <div class="options-button">
-                    <i class="fas fa-ellipsis-h"></i>
+            `;
+
+            // Add event listeners
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                renderMainView();
+            });
+
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const trackId = parseInt(item.getAttribute('data-track-id'));
+                    const track = album.tracks.find(t => t.id === trackId);
+                    
+                    if (currentTrack && currentTrack.id === track.id) {
+                        isPlaying = !isPlaying;
+                        if (isPlaying) {
+                            audioElement.play();
+                        } else {
+                            audioElement.pause();
+                        }
+                    } else {
+                        currentTrack = { ...track, albumId: album.id };
+                        isPlaying = true;
+                        loadAndPlayTrack();
+                    }
+                    
+                    renderAlbumDetailView(album);
+                });
+            });
+        }
+
+        function renderStoresView() {
+            currentView = 'stores';
+            const appContainer = document.getElementById('app-container');
+            appContainer.innerHTML = `
+                <div>
+                    <div class="store-header">
+                        <div class="store-title">YALDI.IT</div>
+                        <div class="store-icons">
+                            <i class="fas fa-search"></i>
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                    </div>
+
+                    <div class="categories">
+                        <button class="category-btn active" data-category="all">ALL</button>
+                        <button class="category-btn" data-category="apparel">APPAREL</button>
+                        <button class="category-btn" data-category="music">MUSIC</button>
+                    </div>
+
+                    <div class="products-grid">
+                        ${products.map(product => `
+                            <div class="product-item">
+                                <img class="product-image" src="${product.image}" alt="${product.name}" width="300" height="300">
+                                <div class="product-id">${product.id}</div>
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-price">${product.price}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${renderPlayer()}
+                    ${renderNavigation('stores-view')}
                 </div>
-            </div>
+            `;
 
-            <div class="album-artwork">
-                <img id="expanded-artwork" src="/placeholder.svg" alt="Album Artwork" class="artwork-image">
-            </div>
+            // Add event listeners for category buttons
+            let currentCategory = 'all';
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentCategory = btn.getAttribute('data-category');
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const filteredProducts = currentCategory === 'all' 
+                        ? products 
+                        : products.filter(p => p.category === currentCategory);
+                    
+                    const productsGrid = document.querySelector('.products-grid');
+                    if (filteredProducts.length === 0) {
+                        productsGrid.innerHTML = '<p>Nessun prodotto trovato.</p>';
+                    } else {
+                        productsGrid.innerHTML = filteredProducts.map(product => `
+                            <div class="product-item">
+                                <img class="product-image" src="${product.image}" alt="${product.name}" width="300" height="300">
+                                <div class="product-id">${product.id}</div>
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-price">${product.price}</div>
+                            </div>
+                        `).join('');
+                    }
+                });
+            });
+        }
 
-            <div class="track-info-large">
-                <div class="track-title-large" id="expanded-track-title">Track Title</div>
-                <div class="track-artist" id="expanded-track-artist">Artist</div>
-            </div>
+        function renderEventsView() {
+            currentView = 'events';
+            const appContainer = document.getElementById('app-container');
+            appContainer.innerHTML = `
+                <div>
+                    <div class="header">
+                        <div class="header-item"> </div>
+                        <div class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
 
-            <div class="progress-container" id="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
+                    <div class="menu">
+                        <div class="menu-item">NEW EVENTS</div>
+                    </div>
 
-            <div class="time-display">
-                <span class="current-time" id="current-time">0:00</span>
-                <span class="total-time" id="total-time">0:00</span>
-            </div>
+                    <div class="events-grid">
+                        ${events.length === 0 ? 
+                            '<p>Nessun evento.</p>' : 
+                            events.map((event, index) => `
+                                <div class="event-card">
+                                    <div class="event-content">
+                                        <div class="event-title">${event.title}</div>
+                                        <div class="event-subtitle">${event.subtitle}</div>
+                                        <div class="event-desc">${event.desc}</div>
+                                        <div class="event-location">${event.location}</div>
+                                        <div class="event-venue">${event.venue}</div>
+                                        <div class="event-date">${event.date}</div>
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
 
-            <div class="controls-large">
-                <button class="prev-btn-large" id="prev-btn-large">
-                    <i class="fas fa-backward"></i>
-                </button>
-                <button class="play-btn-large" id="play-btn-large">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="next-btn-large" id="next-btn-large">
-                    <i class="fas fa-forward"></i>
-                </button>
-            </div>
-
-            <div class="queue-container" id="queue-container">
-                <!-- Queue items will be dynamically inserted here -->
-            </div>
-
-            <div class="player-footer">
-                <button class="footer-btn" id="loop-btn">LOOP</button>
-                <button class="footer-btn active" id="queue-btn">QUEUE</button>
-                <button class="footer-btn" id="shuffle-btn">SHUFFLE</button>
-            </div>
-        </div>
-
-        <div class="player-bar" id="player-bar">
-            <div class="now-playing">
-                <img id="player-artwork" src="/placeholder.svg" alt="No track selected" width="50" height="50">
-                <div class="track-info">
-                    <div class="track-title" id="player-track-title">Nessuna traccia selezionata</div>
-                    <div class="track-album" id="player-track-album">Seleziona un album per iniziare</div>
+                    ${renderPlayer()}
+                    ${renderNavigation('events-view')}
                 </div>
-            </div>
-            <div class="controls">
-                <button class="prev-btn" id="prev-btn">
-                    <i class="fas fa-backward"></i>
-                </button>
-                <button class="play-btn" id="play-btn">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="next-btn" id="next-btn">
-                    <i class="fas fa-forward"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+            `;
+        }
 
-    <audio id="audio-player"></audio>
-    <script src="script.js"></script>
+        function renderHqlView() {
+            currentView = 'hql';
+            const appContainer = document.getElementById('app-container');
+            appContainer.innerHTML = `
+                <div>
+                    <div class="message-container">
+                        <div class="message-bubble">
+                            <p>Coming soon</p>
+                        </div>
+                        <div class="message-info">YALDEWS • Now</div>
+
+                        <div class="message-bubble message-from-y">
+                            <p>MORE FEATURES COMING SOON ON NEXT UPDATE</p>
+                        </div>
+                        <div class="message-info message-info-y">Y • Now</div>
+                    </div>
+
+                    ${renderPlayer()}
+                    ${renderNavigation('hql-view')}
+                </div>
+            `;
+        }
+
+        function renderNavigation(activeView) {
+            return `
+                <div class="nav-bar">
+                    <div class="nav-item ${activeView === 'main-view' ? 'active' : ''}" data-view="main-view">YZLY</div>
+                    <div class="nav-item ${activeView === 'stores-view' ? 'active' : ''}" data-view="stores-view">SNDLS</div>
+                    <div class="nav-item ${activeView === 'events-view' ? 'active' : ''}" data-view="events-view">SPLY</div>
+                    <div class="nav-item ${activeView === 'hql-view' ? 'active' : ''}" data-view="hql-view">HQL</div>
+                </div>
+            `;
+        }
+
+        function renderPlayer() {
+            if (!currentTrack && !currentAlbum) {
+                return '';
+            }
+
+            return `
+                <div class="player-container ${isPlayerExpanded ? 'expanded' : ''}">
+                    <div class="expanded-player" id="expanded-player">
+                        <div class="player-header">
+                            <div class="back-button">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="album-title" id="expanded-album-title">
+                                ${currentAlbum?.title || "Album Title"}
+                            </div>
+                            <div class="options-button">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+
+                        <div class="album-artwork">
+                            ${currentAlbum ? `
+                                <img
+                                    id="expanded-artwork"
+                                    src="${currentAlbum.image}"
+                                    alt="Album Artwork"
+                                    class="artwork-image"
+                                    width="300"
+                                    height="300"
+                                />
+                            ` : ''}
+                        </div>
+
+                        <div class="track-info-large">
+                            <div class="track-title-large" id="expanded-track-title">
+                                ${currentTrack?.title || "Track Title"}
+                            </div>
+                            <div class="track-artist" id="expanded-track-artist">
+                                ${currentTrack?.artist || currentAlbum?.title || "Artist"}
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+
+                        <div class="time-display">
+                            <span class="current-time">${formatTime(currentTime)}</span>
+                            <span class="total-time">${formatTime(duration)}</span>
+                        </div>
+
+                        <div class="controls-large">
+                            <button class="prev-btn-large">
+                                <i class="fas fa-backward"></i>
+                            </button>
+                            <button class="play-btn-large">
+                                <i class="fas ${isPlaying ? "fa-pause" : "fa-play"}"></i>
+                            </button>
+                            <button class="next-btn-large">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                        </div>
+
+                        ${currentTrack?.lyrics ? renderLyricsView(currentTrack.lyrics, currentTime, isLyricsExpanded) : ''}
+
+                        <div class="player-footer">
+                            <div class="player-controls-center">
+                                <button class="footer-btn ${isLoopActive ? 'active' : ''}">
+                                    LOOP
+                                </button>
+                                <button class="footer-btn ${isShuffleActive ? 'active' : ''}">
+                                    SHUFFLE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="player-bar">
+                        <div class="now-playing">
+                            ${currentAlbum ? `
+                                <img
+                                    id="player-artwork"
+                                    src="${currentAlbum.image}"
+                                    alt="Now playing: ${currentTrack?.title || "No track"}"
+                                    width="50"
+                                    height="50"
+                                />
+                            ` : ''}
+                            <div class="track-info">
+                                <div class="track-title" id="player-track-title">
+                                    ${currentTrack?.title || "Nessuna traccia selezionata"}
+                                </div>
+                                <div class="track-album" id="player-track-album">
+                                    ${currentAlbum?.title || "Seleziona un album per iniziare"}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button class="prev-btn">
+                                <i class="fas fa-backward"></i>
+                            </button>
+                            <button class="play-btn">
+                                <i class="fas ${isPlaying ? "fa-pause" : "fa-play"}"></i>
+                            </button>
+                            <button class="next-btn">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLyricsView(lyrics, currentTime, isExpanded) {
+            if (!lyrics || lyrics.length === 0) {
+                return '';
+            }
+
+            // Find the current line based on the current time
+            currentLineIndex = lyrics.findIndex((line) => currentTime >= line.startTime && currentTime <= line.endTime);
+            if (currentLineIndex === -1 && currentTime > 0) {
+                // If we're past all lyrics, show the last one
+                currentLineIndex = lyrics.length - 1;
+            }
+
+            // For the preview, show the current line and a few surrounding lines
+            const previewLines = isExpanded
+                ? []
+                : lyrics.slice(Math.max(0, currentLineIndex - 1), Math.min(lyrics.length, currentLineIndex + 3));
+
+            if (!isExpanded) {
+                return `
+                    <div class="lyrics-container">
+                        <div class="lyrics-preview">
+                            <div class="lyrics-preview-header">Lyrics preview</div>
+                            <div class="lyrics-preview-content">
+                                ${previewLines.map((line, index) => {
+                                    const isCurrentLine = index === (currentLineIndex === -1 ? 0 : Math.min(1, previewLines.length - 1));
+                                    return `
+                                        <div class="lyrics-line ${isCurrentLine ? "current" : ""} clickable" data-start-time="${line.startTime}">
+                                            ${line.text}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <button class="show-lyrics-btn">Show lyrics</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="lyrics-container expanded">
+                        <div class="lyrics-full">
+                            <div class="lyrics-full-content">
+                                ${lyrics.map((line, index) => `
+                                    <div class="lyrics-line ${index === currentLineIndex ? "current" : ""} clickable" data-start-time="${line.startTime}">
+                                        ${line.text}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Helper functions
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+        }
+
+        function loadAndPlayTrack() {
+            if (!currentTrack) return;
+            
+            audioElement.src = currentTrack.audioSrc;
+            audioElement.load();
+            
+            if (isPlaying) {
+                audioElement.play().catch(e => console.error("Error playing audio:", e));
+            }
+            
+            updateUI();
+        }
+
+        function playPrevTrack() {
+            if (!currentTrack || !currentAlbum) return;
+
+            // If current time is more than 3 seconds, just restart the current track
+            if (audioElement.currentTime > 3) {
+                audioElement.currentTime = 0;
+                return;
+            }
+
+            // Find current track in album tracks
+            const currentIndex = currentAlbum.tracks.findIndex((t) => t.id === currentTrack.id);
+
+            if (currentIndex > 0) {
+                // There is a previous track in the album
+                currentTrack = { ...currentAlbum.tracks[currentIndex - 1], albumId: currentAlbum.id };
+                isPlaying = true;
+                loadAndPlayTrack();
+            } else {
+                // Just restart the current track
+                audioElement.currentTime = 0;
+            }
+        }
+
+        function playNextTrack() {
+            if (!currentTrack || !currentAlbum) return;
+
+            // Find current track in album tracks
+            const currentIndex = currentAlbum.tracks.findIndex((t) => t.id === currentTrack.id);
+
+            if (currentIndex !== -1 && currentIndex < currentAlbum.tracks.length - 1) {
+                // There is a next track in the album
+                currentTrack = { ...currentAlbum.tracks[currentIndex + 1], albumId: currentAlbum.id };
+                isPlaying = true;
+                loadAndPlayTrack();
+            } else {
+                // End of album: Pause
+                isPlaying = false;
+                audioElement.pause();
+                updateUI();
+            }
+        }
+
+        function toggleLoop() {
+            isLoopActive = !isLoopActive;
+            audioElement.loop = isLoopActive;
+            updateUI();
+        }
+
+        function toggleShuffle() {
+            isShuffleActive = !isShuffleActive;
+            updateUI();
+        }
+
+        function toggleLyricsExpand() {
+            isLyricsExpanded = !isLyricsExpanded;
+            updateUI();
+        }
+
+        function seekToTime(time) {
+            audioElement.currentTime = time;
+            if (!isPlaying) {
+                isPlaying = true;
+                audioElement.play().catch(e => console.error("Error playing audio:", e));
+            }
+            updateUI();
+        }
+
+        function updateProgressBar() {
+            if (!audioElement || !audioElement.duration) return;
+
+            const percent = (audioElement.currentTime / audioElement.duration) * 100;
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${percent}%`;
+            }
+        }
+
+        function updateUI() {
+            // Update the UI based on the current state
+            switch (currentView) {
+                case 'main':
+                    renderMainView();
+                    break;
+                case 'album':
+                    renderAlbumDetailView(currentAlbum);
+                    break;
+                case 'stores':
+                    renderStoresView();
+                    break;
+                case 'events':
+                    renderEventsView();
+                    break;
+                case 'hql':
+                    renderHqlView();
+                    break;
+            }
+
+            // Set up event listeners again after re-rendering
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const view = item.getAttribute('data-view');
+                    switch (view) {
+                        case 'main-view':
+                            renderMainView();
+                            break;
+                        case 'stores-view':
+                            renderStoresView();
+                            break;
+                        case 'events-view':
+                            renderEventsView();
+                            break;
+                        case 'hql-view':
+                            renderHqlView();
+                            break;
+                    }
+                });
+            });
+
+            // Player controls
+            const playerBar = document.querySelector('.player-bar');
+            if (playerBar) {
+                playerBar.addEventListener('click', (e) => {
+                    if (
+                        e.target.closest('.controls') ||
+                        e.target.closest('.play-btn') ||
+                        e.target.closest('.prev-btn') ||
+                        e.target.closest('.next-btn')
+                    ) {
+                        return;
+                    }
+                    
+                    isPlayerExpanded = true;
+                    document.body.classList.add('player-expanded');
+                    updateUI();
+                });
+            }
+
+            const backButton = document.querySelector('.back-button');
+            if (backButton) {
+                backButton.addEventListener('click', () => {
+                    isPlayerExpanded = false;
+                    document.body.classList.remove('player-expanded');
+                    updateUI();
+                });
+            }
+
+            const playBtn = document.querySelector('.play-btn');
+            if (playBtn) {
+                playBtn.addEventListener('click', () => {
+                    isPlaying = !isPlaying;
+                    if (isPlaying) {
+                        audioElement.play().catch(e => console.error("Error playing audio:", e));
+                    } else {
+                        audioElement.pause();
+                    }
+                    updateUI();
+                });
+            }
+
+            const playBtnLarge = document.querySelector('.play-btn-large');
+            if (playBtnLarge) {
+                playBtnLarge.addEventListener('click', () => {
+                    isPlaying = !isPlaying;
+                    if (isPlaying) {
+                        audioElement.play().catch(e => console.error("Error playing audio:", e));
+                    } else {
+                        audioElement.pause();
+                    }
+                    updateUI();
+                });
+            }
+
+            const prevBtn = document.querySelector('.prev-btn');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPrevTrack();
+                });
+            }
+
+            const prevBtnLarge = document.querySelector('.prev-btn-large');
+            if (prevBtnLarge) {
+                prevBtnLarge.addEventListener('click', () => {
+                    playPrevTrack();
+                });
+            }
+
+            const nextBtn = document.querySelector('.next-btn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playNextTrack();
+                });
+            }
+
+            const nextBtnLarge = document.querySelector('.next-btn-large');
+            if (nextBtnLarge) {
+                nextBtnLarge.addEventListener('click', () => {
+                    playNextTrack();
+                });
+            }
+
+            // Footer buttons
+            const footerBtns = document.querySelectorAll('.footer-btn');
+            if (footerBtns.length > 0) {
+                footerBtns[0].addEventListener('click', toggleLoop);
+                footerBtns[1].addEventListener('click', toggleShuffle);
+            }
+
+            // Progress bar
+            const progressContainer = document.querySelector('.progress-container');
+            if (progressContainer) {
+                progressContainer.addEventListener('click', (e) => {
+                    if (!audioElement || !audioElement.duration) return;
+                    
+                    const rect = progressContainer.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    
+                    audioElement.currentTime = percent * audioElement.duration;
+                    updateProgressBar();
+                });
+            }
+
+            // Lyrics
+            const showLyricsBtn = document.querySelector('.show-lyrics-btn');
+            if (showLyricsBtn) {
+                showLyricsBtn.addEventListener('click', toggleLyricsExpand);
+            }
+
+            const lyricsLines = document.querySelectorAll('.lyrics-line.clickable');
+            if (lyricsLines.length > 0) {
+                lyricsLines.forEach(line => {
+                    line.addEventListener('click', () => {
+                        const startTime = parseFloat(line.getAttribute('data-start-time'));
+                        seekToTime(startTime);
+                    });
+                });
+            }
+
+            // Audio element event listeners
+            audioElement.addEventListener('timeupdate', () => {
+                currentTime = audioElement.currentTime;
+                updateProgressBar();
+                
+                // Update lyrics if needed
+                if (currentTrack?.lyrics) {
+                    const newLineIndex = currentTrack.lyrics.findIndex(
+                        (line) => currentTime >= line.startTime && currentTime <= line.endTime
+                    );
+                    
+                    if (newLineIndex !== -1 && newLineIndex !== currentLineIndex) {
+                        currentLineIndex = newLineIndex;
+                        updateUI();
+                    }
+                }
+            });
+
+            audioElement.addEventListener('loadedmetadata', () => {
+                duration = audioElement.duration;
+                updateUI();
+            });
+
+            audioElement.addEventListener('ended', () => {
+                if (isLoopActive) {
+                    audioElement.currentTime = 0;
+                    audioElement.play().catch(e => console.error("Error looping track:", e));
+                } else {
+                    playNextTrack();
+                }
+            });
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
