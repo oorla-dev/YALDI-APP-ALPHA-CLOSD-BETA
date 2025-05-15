@@ -111,10 +111,12 @@ document.addEventListener("DOMContentLoaded", () => {
   ]
 
   const products = [
-    { id: "AY-01", name: "YALDHI CD", image: "images/yaldhicd.png", price: "€30.00", category: "music" },
     { id: "FM-104", name: "FREE MARINAIO TEE", image: "images/fm.jpg", price: "€30.00", category: "apparel" },
     { id: "YS-22", name: "YALDHI HOODIE", image: "images/hoodie.jpg", price: "€30.00", category: "apparel" },
+    { id: "FM-104", name: "YALDHI BAG", image: "images/borsa.jpg", price: "€10.00", category: "accessories" },
+    { id: "FM-104", name: "YALDHI BOTTLE", image: "images/borraccia.jpg", price: "€15.00", category: "accessories" },
     { id: "BL-05", name: "BULDY VINYL", image: "images/buldy.jpg", price: "€30.00", category: "music" },
+    { id: "AY-01", name: "YALDHI CD", image: "images/yaldhicd.png", price: "€30.00", category: "music" },
   ]
 
   const events = [
