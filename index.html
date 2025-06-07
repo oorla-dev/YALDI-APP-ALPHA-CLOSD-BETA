@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 YALDI Music App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main View (Album Grid) -->
+        <div id="main-view" class="view active-view">
+            <div class="album-grid" id="album-grid">
+                <!-- Albums will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- Album Detail View -->
+        <div id="album-detail-view" class="view">
+            <div class="album-header">
+                <button class="back-btn" id="album-back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="album-title" id="detail-album-title">Album Title</h1>
+            </div>
+
+            <div class="album-info">
+                <img id="detail-album-cover" class="album-cover" src="/placeholder.svg" alt="Album cover">
+                <div class="album-details">
+                    <h2 class="album-title-large" id="detail-album-title-large">Album Title</h2>
+                    <p class="album-year" id="detail-album-year">Year</p>
+                    <p class="album-tracks-count" id="detail-album-tracks-count">0 brani</p>
+                </div>
+            </div>
+
+            <div class="tracks-list" id="tracks-list">
+                <!-- Tracks will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- Store View -->
+        <div id="stores-view" class="view">
+            <div class="store-header">
+                <div class="store-title">🛍️ YALDI.IT</div>
+                <div class="store-icons">
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="search-input" placeholder="Cerca prodotti..." style="display: none;">
+                        <i class="fas fa-search search-icon" id="search-toggle"></i>
+                    </div>
+                    <div class="cart-icon-container" id="cart-toggle">
+                        <i class="fas fa-shopping-bag cart-icon"></i>
+                        <span class="cart-badge" id="cart-badge" style="display: none;">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="categories-fixed">
+                <button class="category-btn active" data-category="all">TUTTO</button>
+                <button class="category-btn" data-category="apparel">ABBIGLIAMENTO</button>
+                <button class="category-btn" data-category="music">MUSICA</button>
+                <button class="category-btn" data-category="accessories">ACCESSORI</button>
+            </div>
+
+            <div class="products-grid" id="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- Events View -->
+        <div id="events-view" class="view">
+            <div class="header">
+                <div class="header-item">📅 EVENTI</div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+
+            <div class="menu">
+                <div class="menu-item">NUOVI EVENTI</div>
+            </div>
+
+            <div class="events-grid" id="events-grid">
+                <!-- Events will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- HQL View (AI Chat) -->
+        <div id="hql-view" class="view">
+            <div id="ai-chat-container" class="ai-chat-container">
+                <div class="chat-header">
+                    <h2>🤖 YALDI HQ</h2>
+                    <div class="online-indicator">
+                        <span class="online-dot"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messages-container">
+                    <!-- Messages will be loaded here dynamically -->
+                </div>
+
+                <form class="input-container" id="chat-form">
+                    <input type="text" id="chat-input" placeholder="Scrivi un messaggio...">
+                    <button type="submit">📤 Invia</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Profile View -->
+        <div id="profile-view" class="view">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <h1>👤 Profilo</h1>
+                    <div class="theme-toggle" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <div class="profile-avatar-container">
+                        <img src="/placeholder.svg" alt="Profile Avatar" class="profile-avatar" id="profile-avatar">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                            <span>Cambia foto</span>
+                        </div>
+                        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+                    </div>
+
+                    <h2 class="profile-username" id="profile-username">🎵 YaldiUser</h2>
+                    <p class="profile-fullname" id="profile-fullname">Utente YALDI</p>
+
+                    <div class="profile-tabs">
+                        <button class="profile-tab active" data-tab="info">ℹ️ Info</button>
+                        <button class="profile-tab" data-tab="settings">⚙️ Impostazioni</button>
+                    </div>
+
+                    <div class="profile-tab-content active" id="info-tab">
+                        <div class="profile-info">
+                            <div class="info-section">
+                                <h3>📝 Bio</h3>
+                                <p id="profile-bio">Amante della musica YALDI 🎵</p>
+                            </div>
+
+                            <div class="info-section">
+                                <h3>📍 Dettagli</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> <span id="profile-location">Italia</span></p>
+                                <p><i class="fas fa-link"></i> <span id="profile-website">yaldi.it</span></p>
+                            </div>
+
+                            <div class="info-section">
+                                <h3>🌐 Social</h3>
+                                <div class="social-links" id="social-links">
+                                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="social-link"><i class="fab fa-spotify"></i></a>
+                                </div>
+                            </div>
+
+                            <button class="edit-profile-btn" id="edit-profile-btn">✏️ Modifica Profilo</button>
+                        </div>
+                    </div>
+
+                    <div class="profile-tab-content" id="settings-tab">
+                        <div class="profile-settings">
+                            <div class="settings-section">
+                                <h3>🎛️ Preferenze</h3>
+                                <div class="setting-item">
+                                    <span>🌙 Tema Scuro</span>
+                                    <div class="toggle-switch" id="dark-mode-toggle">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                                <div class="setting-item">
+                                    <span>⚙️ Altre Preferenze</span>
+                                    <button class="secondary-btn" id="preferences-btn">Gestisci</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <h3>👤 Account</h3>
+                                <div class="setting-item">
+                                    <span>📧 Email</span>
+                                    <span id="profile-email">user@yaldi.it</span>
+                                </div>
+                            </div>
+
+                            <button class="logout-btn" id="logout-btn">🚪 Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences View -->
+        <div id="preferences-view" class="view">
+            <div class="preferences-container">
+                <div class="preferences-header">
+                    <button class="back-button" id="preferences-back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1>⚙️ Impostazioni</h1>
+                </div>
+
+                <div class="preferences-tabs">
+                    <button class="preference-tab active" data-tab="general">
+                        🌍 Generali
+                    </button>
+                    <button class="preference-tab" data-tab="audio">
+                        🎵 Audio
+                    </button>
+                    <button class="preference-tab" data-tab="privacy">
+                        🔒 Privacy
+                    </button>
+                    <button class="preference-tab" data-tab="advanced">
+                        🔧 Avanzate
+                    </button>
+                </div>
+
+                <div class="preferences-content">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>🔐 Accedi</h1>
+                        <p>Accedi al tuo account YALDI</p>
+                    </div>
+
+                    <div class="auth-error" id="login-error" style="display: none;"></div>
+
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-email">📧 Email</label>
+                            <input type="email" id="login-email" required placeholder="La tua email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login-password">🔒 Password</label>
+                            <input type="password" id="login-password" required placeholder="La tua password">
+                        </div>
+
+                        <button type="submit" class="auth-button" id="login-button">🚀 Accedi</button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Non hai un account? <a href="#" class="auth-link" id="register-link">Registrati</a></p>
+                    </div>
+
+                    <button id="login-back-btn" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Indietro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register View -->
+        <div id="register-view" class="view">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>📝 Registrati</h1>
+                        <p>Crea un nuovo account YALDI</p>
+                    </div>
+
+                    <div class="auth-error" id="register-error" style="display: none;"></div>
+
+                    <form id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="register-username">👤 Username</label>
+                            <input type="text" id="register-username" required placeholder="Il tuo username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-email">📧 Email</label>
+                            <input type="email" id="register-email" required placeholder="La tua email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-password">🔒 Password</label>
+                            <input type="password" id="register-password" required placeholder="La tua password" minlength="6">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-confirm-password">🔐 Conferma Password</label>
+                            <input type="password" id="register-confirm-password" required placeholder="Conferma la tua password" minlength="6">
+                        </div>
+
+                        <button type="submit" class="auth-button" id="register-button">🎉 Registrati</button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Hai già un account? <a href="#" class="auth-link" id="login-link">Accedi</a></p>
+                    </div>
+
+                    <button id="register-back-btn" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Indietro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player -->
+        <div class="player-container" id="player-container">
+            <div class="player-bar" id="player-bar">
+                <div class="now-playing">
+                    <img id="player-artwork" src="/placeholder.svg" alt="Now playing">
+                    <div class="track-info">
+                        <div class="track-title" id="player-track-title">🎵 Seleziona una traccia</div>
+                        <div class="track-album" id="player-track-album">Scegli un album per iniziare</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="prev-btn" id="prev-btn">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button class="play-btn" id="play-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="next-btn" id="next-btn">
+                        <i class="fas fa-forward"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="expanded-player" id="expanded-player">
+                <div class="player-header">
+                    <div class="back-button" id="player-back-btn">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="album-title" id="expanded-album-title">Album Title</div>
+                    <div class="options-button">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+
+                <div class="album-artwork">
+                    <img id="expanded-artwork" src="/placeholder.svg" alt="Album Artwork" class="artwork-image">
+                </div>
+
+                <div class="track-info-large">
+                    <div class="track-title-large" id="expanded-track-title">🎵 Track Title</div>
+                    <div class="track-artist" id="expanded-track-artist">Artist</div>
+                </div>
+
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+
+                <div class="time-display">
+                    <span class="current-time" id="current-time">0:00</span>
+                    <span class="total-time" id="total-time">0:00</span>
+                </div>
+
+                <div class="controls-large">
+                    <button class="prev-btn-large" id="prev-btn-large">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button class="play-btn-large" id="play-btn-large">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="next-btn-large" id="next-btn-large">
+                        <i class="fas fa-forward"></i>
+                    </button>
+                </div>
+
+                <div class="volume-control" id="volume-control" style="display: none;">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" min="0" max="1" step="0.01" value="0.7" class="volume-slider" id="volume-slider">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+
+                <div class="lyrics-container" id="lyrics-container">
+                    <!-- Lyrics will be loaded here dynamically -->
+                </div>
+
+                <div class="player-footer">
+                    <div class="player-controls-center">
+                        <button class="footer-btn" id="loop-btn">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <button class="footer-btn" id="shuffle-btn">
+                            <i class="fas fa-random"></i>
+                        </button>
+                        <button class="footer-btn" id="lyrics-btn">
+                            <i class="fas fa-align-left"></i>
+                        </button>
+                        <button class="footer-btn" id="volume-btn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-item active" data-view="main-view">🎵 YZLY</div>
+            <div class="nav-item" data-view="stores-view">🛍️ SNDLS</div>
+            <div class="nav-item" data-view="events-view">📅 SPLY</div>
+            <div class="nav-item" data-view="hql-view">🤖 HQL</div>
+            <div class="nav-item" data-view="profile-view"><i class="fas fa-user"></i></div>
+        </div>
+
+        <!-- Modals -->
+        <!-- Size Selector Modal -->
+        <div class="size-modal-overlay" id="size-modal" style="display: none;">
+            <div class="size-modal">
+                <div class="size-header">
+                    <h2>📏 Seleziona Taglia</h2>
+                    <button class="close-btn" id="size-modal-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="product-name" id="size-product-name">Nome Prodotto</div>
+                <div class="size-options">
+                    <button class="size-btn" data-size="S">S</button>
+                    <button class="size-btn" data-size="M">M</button>
+                    <button class="size-btn" data-size="L">L</button>
+                    <button class="size-btn" data-size="XL">XL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div class="cart-modal-overlay" id="cart-modal" style="display: none;">
+            <div class="cart-modal">
+                <div class="cart-header">
+                    <h2>🛒 Il tuo Carrello</h2>
+                    <button class="close-btn" id="cart-modal-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div id="cart-content">
+                    <!-- Cart content will be loaded here dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Messages -->
+        <div class="saved-message" id="saved-message" style="display: none;">
+            <i class="fas fa-check-circle"></i> <span id="toast-message">✅ Operazione completata</span>
+        </div>
+
+        <!-- Audio Element -->
+        <audio id="audio-player"></audio>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
